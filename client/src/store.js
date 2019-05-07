@@ -10,7 +10,8 @@ export default new Vuex.Store({
 		books: '',
 		book: '',
 		loading: false,
-		error: false
+		error: false,
+		dark: false
 	},
 	getters: {
 		allBooks(state) {
@@ -24,6 +25,9 @@ export default new Vuex.Store({
 		},
 		getError(state) {
 			return state.error
+		},
+		isDark(state) {
+			return state.dark
 		}
 	},
 	mutations: {
@@ -38,6 +42,9 @@ export default new Vuex.Store({
 		},
 		setError(state, error) {
 			state.error = error
+		},
+		invert(state) {
+			state.dark = !state.dark
 		}
 	},
 	actions: {

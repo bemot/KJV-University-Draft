@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-dialog v-model="loading" hide-overlay persistent width="300">
-      <v-card dark>
+      <v-card>
         <v-card-text>
           Loading God's Word...
           <v-progress-linear indeterminate color="red" class="mb-0"></v-progress-linear>
@@ -11,7 +11,7 @@
     <v-tabs v-if="!loading" slider-color="red" grow show-arrows>
       <v-tab v-for="n in bookProp.chapterCount" :key="n" ripple>Chapter {{ n }}</v-tab>
       <v-tab-item v-for="chapter in bookProp.chapters" :key="chapter._id">
-        <v-card flat color="#303030">
+        <v-card flat color="isDark ? #303030 : null">
           <v-container align-center text-xs-left>
             <v-layout row wrap>
               <v-flex xs12>
@@ -47,7 +47,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["loading", "oneBook"])
+    ...mapGetters(["loading", "oneBook", "isDark"])
   },
   created() {
     this.$store.dispatch("fetchOneBook", this.$route.params.bookName);

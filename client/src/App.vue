@@ -1,5 +1,5 @@
 <template>
-  <v-app dark>
+  <v-app :dark="isDark">
     <v-navigation-drawer fixed v-model="drawer" app>
       <v-list two-line subheader>
         <v-subheader class="grey--text">Holy Bible - King James Version</v-subheader>
@@ -31,6 +31,10 @@
           style="cursor: pointer"
         >{{ this.$route.params.bookName || 'KJV Bible'}}</router-link>
       </v-toolbar-title>
+      <v-spacer></v-spacer>
+      <v-btn icon>
+        <v-icon @click="invert()">invert_colors</v-icon>
+      </v-btn>
     </v-toolbar>
 
     <v-content>
@@ -50,13 +54,14 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["allBooks", "getError", "oneBook"]),
+    ...mapGetters(["allBooks", "getError", "oneBook", "isDark"]),
     book() {
       return { ...this.oneBook.getOneBook };
     }
   },
   methods: {
-    ...mapActions(["fetchOneBook"])
+    ...mapActions(["fetchOneBook"]),
+    ...mapMutations(["invert"])
   },
   created() {
     this.$store.dispatch("fetchBooks");
