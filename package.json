@@ -1,0 +1,24 @@
+{
+	"name": "bible-api",
+	"version": "1.0.0",
+	"description": "",
+	"main": "index.js",
+	"dependencies": {
+		"apollo-server": "^2.4.8",
+		"concurrently": "^4.1.0",
+		"graphql": "^14.2.1",
+		"mongoose": "^5.5.4",
+		"mongoose-timestamp": "^0.6.0"
+	},
+	"devDependencies": {
+		"nodemon": "^1.18.11"
+	},
+	"scripts": {
+		"server": "node index.js",
+		"dev-server": "nodemon index.js",
+		"client": "cd client && npm run serve",
+		"dev": "concurrently \"nodemon index.js\" \"cd client && npm run serve\""
+	},
+	"author": "Paul Scott",
+	"license": "ISC"
+}

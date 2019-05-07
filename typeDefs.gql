@@ -1,0 +1,45 @@
+type Verse {
+	_id: ID
+	bookName: String!
+	chapterNumber: Int!
+	verseNumber: Int!
+	verseText: String!
+	wordCount: Int
+	letterCount: Int
+	characterCount: Int
+	createdAt: Int!
+	updatedAt: Int!
+}
+
+type Chapter {
+	_id: ID
+	bookName: String!
+	chapterNumber: Int!
+	verses: [Verse!]!
+	totalVerseCount: Int
+	totalWordCount: Int
+	totalLetterCount: Int
+	totalCharacterCount: Int
+	createdAt: Int!
+	updatedAt: Int!
+}
+
+type Book {
+	_id: ID
+	bookTitle: String!
+	bookName: String!
+	bookNumber: Int!
+	chapters: [Chapter!]!
+	chapterCount: Int!
+	totalBookVerses: Int
+	totalBookWords: Int
+	totalBookLetters: Int
+	totalBookCharacters: Int
+	createdAt: Int!
+	updatedAt: Int!
+}
+
+type Query {
+	getBooks: [Book]
+	getOneBook(name: String!): Book
+}
