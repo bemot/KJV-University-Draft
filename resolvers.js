@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken')
 
 const createToken = (user, secret, expiresIn) => {
 	const { username, email } = user
+	// Sign JWT with secret & expiration date
 	return jwt.sign({ username, email }, secret, { expiresIn })
 }
 
@@ -23,22 +24,27 @@ module.exports = {
 		}
 	},
 	Mutation: {
-		signinUser: async (parent, { username, password }, conext) => {
+		signInUser: async (parent, { username, password }, conext) => {
+			// See if user exist
 			const user = await User.findOne({ username })
 			if (!user) {
 				throw new Error('User not found')
 			}
+			// Else compare passwords to see if it's valid
 			const isValidPassword = await bcrypt.compare(password, user.password)
 			if (!isValidPassword) {
 				throw new Error('Invalid password')
 			}
+			// Else return object with token and expiration date
 			return { token: createToken(user, process.env.SECRET, '1hr') }
 		},
-		signupUser: async (parent, { username, email, password }, context) => {
+		signUpUser: async (parent, { username, email, password }, context) => {
+			// See if user exist
 			const user = await User.findOne({ username })
 			if (user) {
 				throw new Error('User already exists')
 			}
+			// Else create new user
 			const newUser = new User({
 				username,
 				email,

@@ -15,6 +15,7 @@ type BookmarkedVerse {
 	verse: Verse
 	comment: String
 	color: String
+	dark: Boolean
 	favorite: Boolean
 	createdAt: String!
 	updatedAt: String!
@@ -53,6 +54,7 @@ type Chapter {
 type Book {
 	_id: ID
 	bookTitle: String!
+	bookTitle2: String
 	bookName: String!
 	bookNumber: Int!
 	chapters: [Chapter!]!
@@ -72,6 +74,6 @@ type Query {
 }
 
 type Mutation {
-	signupUser(username: String!, email: String!, password: String!): Token
-	signinUser(username: String!, password: String!): Token
+	signUpUser(username: String!, email: String!, password: String!): Token
+	signInUser(username: String!, password: String!): Token
 }

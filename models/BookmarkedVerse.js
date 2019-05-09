@@ -10,6 +10,7 @@ const BookmarkedVerseSchema = new Schema({
 	},
 	comment: String,
 	color: String,
+	dark: Boolean,
 	favorite: Boolean
 })
 

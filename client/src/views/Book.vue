@@ -1,5 +1,6 @@
 <template>
   <div>
+    <!-- Loading Dialog -->
     <v-dialog v-model="loading" hide-overlay persistent width="300">
       <v-card>
         <v-card-text>
@@ -8,21 +9,42 @@
         </v-card-text>
       </v-card>
     </v-dialog>
+    <!-- Chapter View -->
     <v-tabs v-if="!loading" slider-color="red" grow show-arrows>
       <v-tab v-for="n in bookProp.chapterCount" :key="n" ripple>Chapter {{ n }}</v-tab>
+      <!-- Chapter Selection Tabs -->
       <v-tab-item v-for="chapter in bookProp.chapters" :key="chapter._id">
+        <!-- Chapter Slides -->
         <v-card flat color="isDark ? #303030 : null">
           <v-container align-center text-xs-left>
             <v-layout row wrap>
               <v-flex xs12>
+                <!-- Book Title -->
                 <v-card-title class="headline pb-0">
-                  <span class="mx-auto">{{bookProp.bookTitle}}</span>
+                  <div class="mx-auto text-xs-center">{{bookProp.bookTitle}}</div>
                 </v-card-title>
+
+                <hr class="hrline">
+                <!-- Chapter Number -->
                 <v-card-title class="display-2 blue--text pt-0 font-weight-thin">
-                  <span class="mx-auto">Chapter {{chapter.chapterNumber}}</span>
+                  <div class="mx-auto text-xs-center">Chapter {{chapter.chapterNumber}}</div>
                 </v-card-title>
               </v-flex>
-              <v-flex v-for="verse in chapter.verses" :key="verse._id" xs12 lg4 offset-lg4>
+              <v-flex xs12 v-if="bookProp.hasOwnProperty('bookTitle2')">
+                <!-- Chapter Title 2 -->
+                <div
+                  class="text-xs-center grey--text text--darken-2 title font-weight-thin mb-3"
+                >{{bookProp.bookTitle2}}</div>
+              </v-flex>
+              <v-flex
+                v-for="verse in chapter.verses"
+                :key="verse._id"
+                xs12
+                sm8
+                offset-sm2
+                lg4
+                offset-lg4
+              >
                 <v-card-text class="subheading">
                   <span class="grey--text font-weight-light">{{verse.verseNumber}}</span>
                   {{ verse.verseText }}
@@ -56,4 +78,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.hrline {
+  border: 0.3px solid #5e5e5e;
+  margin: 1rem auto;
+  width: 30%;
+}
 </style>

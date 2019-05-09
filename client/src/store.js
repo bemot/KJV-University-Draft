@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import { defaultClient as ApolloClient } from './main'
-import { GET_BOOKS, GET_BOOK } from './queries'
+import { GET_BOOKS, GET_BOOK, SIGNIN_USER } from './queries'
 
 Vue.use(Vuex)
 
@@ -77,6 +77,20 @@ export default new Vuex.Store({
 				commit('setLoading', false)
 			} catch (err) {
 				commit('setLoading', false)
+				commit('setError', err)
+			}
+		},
+		async signInUser({ commit }, payload) {
+			try {
+				const response = await ApolloClient.mutate({
+					mutation: SIGNIN_USER,
+					variables: payload
+				})
+				const { token } = response.data.signInUser
+
+				localStorage.setItem('token', token)
+			} catch (err) {
+				// commit('setLoading', false)
 				commit('setError', err)
 			}
 		}

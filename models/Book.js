@@ -52,6 +52,7 @@ module.exports.Chapter = mongoose.model('chapters', ChapterSchema)
 
 const BookSchema = new mongoose.Schema({
 	bookTitle: String,
+	bookTitle2: String,
 	bookName: {
 		type: String,
 		required: true

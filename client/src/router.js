@@ -14,6 +14,11 @@ export default new Router({
 			component: Home
 		},
 		{
+			path: '/login',
+			name: 'login',
+			component: () => import('./views/SignIn.vue')
+		},
+		{
 			path: '/:bookName',
 			name: 'book',
 			component: () => import('./views/Book.vue')
