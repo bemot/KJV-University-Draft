@@ -13,6 +13,7 @@ export default new Vuex.Store({
 		user: null,
 		loading: false,
 		error: null,
+		authError: null,
 		dark: false
 	},
 	getters: {
@@ -31,6 +32,9 @@ export default new Vuex.Store({
 		getError(state) {
 			return state.error
 		},
+		getAuthError(state) {
+			return state.authError
+		},
 		isDark(state) {
 			return state.dark
 		}
@@ -47,6 +51,9 @@ export default new Vuex.Store({
 		},
 		setError(state, error) {
 			state.error = error
+		},
+		setAuthError(state, error) {
+			state.authError = error
 		},
 		invert(state) {
 			state.dark = !state.dark

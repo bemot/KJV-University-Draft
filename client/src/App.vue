@@ -48,6 +48,7 @@
     </v-toolbar>
 
     <v-content>
+      <!-- Error Alert -->
       <v-alert
         v-if="getError"
         :value="getError"
@@ -55,7 +56,23 @@
         transition="scale-transition"
         dismissible
       >{{ getError.message }}</v-alert>
+      <!-- Router Views -->
       <router-view :bookProp="book" :key="$route.fullPath"/>
+
+      <!-- Auth Error Snackbar -->
+      <v-snackbar
+        v-if="getAuthError"
+        v-model="authErrorSnackbar"
+        color="warning"
+        :timeout="10000"
+        bottom
+        left
+        multi-line
+      >
+        <v-icon class="mr-3">cancel</v-icon>
+        <h3 class="text-xs-center">{{ getAuthError.message }}</h3>
+        <v-btn dark flat to="/login">Sign In</v-btn>
+      </v-snackbar>
     </v-content>
   </v-app>
 </template>
@@ -73,11 +90,19 @@ export default {
   },
   data() {
     return {
-      drawer: false
+      drawer: false,
+      authErrorSnackbar: true
     };
   },
   computed: {
-    ...mapGetters(["allBooks", "getError", "oneBook", "isDark", "user"]),
+    ...mapGetters([
+      "allBooks",
+      "getError",
+      "getAuthError",
+      "oneBook",
+      "isDark",
+      "user"
+    ]),
     book() {
       return { ...this.oneBook.getOneBook };
     },
@@ -87,6 +112,14 @@ export default {
         title = title.charAt(0).toUpperCase() + title.slice(1);
       }
       return title || "KJV University";
+    }
+  },
+  watch: {
+    authError(value) {
+      // if authError has a error & not null show authErrorSnackbar
+      if (value) {
+        this.authErrorSnackbar = true;
+      }
     }
   },
   methods: {
