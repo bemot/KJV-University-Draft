@@ -21,6 +21,17 @@ module.exports = {
 		getUser: async (parent, { id }, context) => {
 			const user = await User.findById({ _id: id })
 			return user
+		},
+		getCurrentUser: async (parent, args, { currentUser }) => {
+			if (!currentUser) {
+				return null
+			}
+			const user = await User.findOne({
+				username: currentUser.username
+			})
+				.populate('bookedmarked')
+				.populate('favorites')
+			return user
 		}
 	},
 	Mutation: {

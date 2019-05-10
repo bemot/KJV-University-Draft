@@ -71,6 +71,7 @@ type Query {
 	getBooks: [Book]
 	getOneBook(name: String!): Book
 	getUser(id: String!): User
+	getCurrentUser: User
 }
 
 type Mutation {

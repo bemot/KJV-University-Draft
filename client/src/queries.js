@@ -1,5 +1,32 @@
 import { gql } from 'apollo-boost'
 
+export const GET_CURRENT_USER = gql`
+	query {
+		getCurrentUser {
+			_id
+			username
+			email
+			avatar
+			joinDate
+			updatedAt
+			favorites {
+				verse {
+					verseText
+				}
+				comment
+				color
+			}
+			bookedmarked {
+				verse {
+					verseText
+				}
+				comment
+				color
+			}
+		}
+	}
+`
+
 export const GET_BOOKS = gql`
 	query {
 		getBooks {

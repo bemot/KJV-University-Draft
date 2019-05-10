@@ -17,7 +17,7 @@
             </v-container>
           </v-img>
           <v-container>
-            <v-form @submit.prevent="handleSignInUser">
+            <v-form @submit.prevent="handleSignInUser" v-model="isValid" lazy-validation ref="form">
               <v-layout row>
                 <v-flex xs12>
                   <v-text-field
@@ -25,8 +25,8 @@
                     prepend-icon="account_circle"
                     label="Username"
                     type="text"
-                    color="red"
-                    autofocus
+                    color="blue lighten-1"
+                    :rules="usernameRules"
                     required
                   ></v-text-field>
                 </v-flex>
@@ -37,7 +37,8 @@
                     v-model="password"
                     prepend-icon="lock"
                     label="Password"
-                    color="red"
+                    color="blue lighten-1"
+                    :rules="passwordRules"
                     :type="show1 ? 'text' : 'password'"
                     :append-icon="show1 ? 'visibility' : 'visibility_off'"
                     @click:append="show1 = !show1"
@@ -48,8 +49,22 @@
               </v-layout>
               <v-layout row>
                 <v-flex xs12>
-                  <v-btn fab type="submit" class="mt-4 mb-5 white--text" color="green" large ripple>
-                    <v-icon>check</v-icon>
+                  <v-btn
+                    fab
+                    type="submit"
+                    class="mt-4 mb-5 white--text"
+                    color="green"
+                    large
+                    :disabled="!isValid || loading"
+                    ripple
+                  >
+                    <v-icon v-if="!loading">lock_open</v-icon>
+                    <v-progress-circular
+                      v-if="loading"
+                      value="loading"
+                      indeterminate
+                      :color="isDark ? 'red' : 'white'"
+                    ></v-progress-circular>
                   </v-btn>
                   <h3>
                     Already have an account?
@@ -66,20 +81,51 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex";
 export default {
   data() {
     return {
       show1: false,
       username: "",
-      password: ""
+      password: "",
+      isValid: false,
+      usernameRules: [
+        // check if usernamein input
+        username => !!username || "Username is required",
+        // Make sure username is less than 10 characters
+        username =>
+          username.length < 10 || "Username must be less than 10 characters"
+      ],
+      passwordRules: [
+        // check if usernamein input
+        password => !!password || "Password is required",
+        // Make sure username is less than 10 characters
+        password =>
+          password.length > 3 || "Password must be more than 3 characters",
+        // Make sure username is less than 10 characters
+        password => password.match(/\d/g) || "Password must contain a number"
+      ]
     };
+  },
+  computed: {
+    ...mapGetters(["user", "loading", "isDark"])
+  },
+  watch: {
+    user(value) {
+      // if user value changes, redirect to home page
+      if (value) {
+        this.$router.push("/");
+      }
+    }
   },
   methods: {
     handleSignInUser() {
-      this.$store.dispatch("signInUser", {
-        username: this.username,
-        password: this.password
-      });
+      if (this.$refs.form.validate()) {
+        this.$store.dispatch("signInUser", {
+          username: this.username,
+          password: this.password
+        });
+      }
     }
   }
 };
