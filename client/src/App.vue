@@ -56,6 +56,14 @@
         transition="scale-transition"
         dismissible
       >{{ getError.message }}</v-alert>
+      <!-- Completed Alert -->
+      <v-alert
+        v-if="isCompleted"
+        :value="isCompleted"
+        type="success"
+        transition="scale-transition"
+        dismissible
+      >{{ isCompleted }}</v-alert>
       <!-- Router Views -->
       <router-view :bookProp="book" :key="$route.fullPath"/>
 
@@ -101,6 +109,7 @@ export default {
       "getAuthError",
       "oneBook",
       "isDark",
+      "isCompleted",
       "user"
     ]),
     book() {

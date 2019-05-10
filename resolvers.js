@@ -44,16 +44,20 @@ module.exports = {
 			// Else compare passwords to see if it's valid
 			const isValidPassword = await bcrypt.compare(password, user.password)
 			if (!isValidPassword) {
-				throw new Error('Invalid password')
+				throw new Error('Invalid Password')
 			}
 			// Else return object with token and expiration date
 			return { token: createToken(user, process.env.SECRET, '1hr') }
 		},
 		signUpUser: async (parent, { username, email, password }, context) => {
 			// See if user exist
-			const user = await User.findOne({ username })
-			if (user) {
-				throw new Error('User already exists')
+			const foundUser = await User.findOne({ username })
+			const foundEmail = await User.findOne({ email })
+			if (foundUser) {
+				throw new Error('A User with that username already exists.')
+			}
+			if (foundEmail) {
+				throw new Error('An account with that email already exists.')
 			}
 			// Else create new user
 			const newUser = new User({

@@ -32,6 +32,11 @@ export default new Router({
 			component: () => import('./views/SignIn.vue')
 		},
 		{
+			path: '/signup',
+			name: 'signup',
+			component: () => import('./views/SignUp.vue')
+		},
+		{
 			path: '/:bookName',
 			name: 'book',
 			component: () => import('./views/Book.vue')

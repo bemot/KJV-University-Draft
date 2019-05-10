@@ -2,7 +2,13 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import router from './router'
 import { defaultClient as ApolloClient } from './main'
-import { GET_BOOKS, GET_BOOK, SIGNIN_USER, GET_CURRENT_USER } from './queries'
+import {
+	GET_BOOKS,
+	GET_BOOK,
+	SIGNIN_USER,
+	GET_CURRENT_USER,
+	SIGNUP_USER
+} from './queries'
 
 Vue.use(Vuex)
 
@@ -13,6 +19,7 @@ export default new Vuex.Store({
 		user: null,
 		loading: false,
 		error: null,
+		completed: null,
 		authError: null,
 		dark: false
 	},
@@ -37,6 +44,9 @@ export default new Vuex.Store({
 		},
 		isDark(state) {
 			return state.dark
+		},
+		isCompleted(state) {
+			return state.completed
 		}
 	},
 	mutations: {
@@ -61,20 +71,20 @@ export default new Vuex.Store({
 		setUser(state, payload) {
 			state.user = payload
 		},
-		clearUser: state => (state.user = null)
+		clearUser: state => (state.user = null),
+		setCompleted(state, payload) {
+			return (state.completed = payload)
+		}
 	},
 	actions: {
 		async fetchBooks({ commit }) {
-			commit('setLoading', true)
 			try {
 				const response = await ApolloClient.query({
 					query: GET_BOOKS
 				})
 				const book = response.data
 				commit('setBooks', book)
-				commit('setLoading', false)
 			} catch (err) {
-				commit('setLoading', false)
 				commit('setError', err)
 			}
 		},
@@ -97,7 +107,6 @@ export default new Vuex.Store({
 			}
 		},
 		async signInUser({ commit }, payload) {
-			localStorage.setItem('token', '')
 			commit('setLoading', true)
 			try {
 				const response = await ApolloClient.mutate({
@@ -109,7 +118,7 @@ export default new Vuex.Store({
 				localStorage.setItem('token', token)
 				// reload the page after current user is fetched (getCurrentUser in main.js)
 				commit('setLoading', false)
-				router.go('/')
+				router.go()
 			} catch (err) {
 				commit('setLoading', false)
 				commit('setError', err)
@@ -128,16 +137,32 @@ export default new Vuex.Store({
 				commit('setError', err)
 			}
 		},
+		async signUpUser({ commit }, payload) {
+			commit('setLoading', true)
+			try {
+				const response = await ApolloClient.mutate({
+					mutation: SIGNUP_USER,
+					variables: payload
+				})
+				const { token } = response.data.signUpUser
+
+				localStorage.setItem('token', token)
+				commit('setLoading', false)
+				// reload the page after current user is fetched (getCurrentUser in main.js)
+				router.push('login')
+				router.go(1)
+			} catch (err) {
+				commit('setLoading', false)
+				commit('setError', err)
+			}
+		},
 		async getCurrentUser({ commit }) {
 			try {
-				commit('setLoading', true)
 				const { data } = await ApolloClient.query({
 					query: GET_CURRENT_USER
 				})
-				commit('setLoading', false)
 				commit('setUser', data.getCurrentUser)
 			} catch (err) {
-				commit('setLoading', false)
 				commit('setError', err)
 			}
 		}

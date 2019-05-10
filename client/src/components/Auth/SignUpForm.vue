@@ -11,13 +11,13 @@
             <v-container fill-height fluid>
               <v-layout fill-height>
                 <v-flex xs12 align-end flexbox>
-                  <span class="headline">Bible Verse</span>
+                  <span class="headline">Get Started Here</span>
                 </v-flex>
               </v-layout>
             </v-container>
           </v-img>
           <v-container>
-            <v-form @submit.prevent="handleSignInUser" v-model="isValid" lazy-validation ref="form">
+            <v-form @submit.prevent="handleSignUpUser" v-model="isValid" lazy-validation ref="form">
               <v-layout row>
                 <v-flex xs12>
                   <v-text-field
@@ -27,6 +27,19 @@
                     type="text"
                     color="blue lighten-1"
                     :rules="usernameRules"
+                    required
+                  ></v-text-field>
+                </v-flex>
+              </v-layout>
+              <v-layout row>
+                <v-flex xs12>
+                  <v-text-field
+                    v-model="email"
+                    prepend-icon="mail_outline"
+                    label="Email"
+                    type="text"
+                    color="blue lighten-1"
+                    :rules="emailRules"
                     required
                   ></v-text-field>
                 </v-flex>
@@ -49,16 +62,33 @@
               </v-layout>
               <v-layout row>
                 <v-flex xs12>
+                  <v-text-field
+                    v-model="passwordConfirmation"
+                    prepend-icon="done_all"
+                    label="Confirm Password"
+                    color="blue lighten-1"
+                    :rules="passwordRules"
+                    :type="show1 ? 'text' : 'password'"
+                    :append-icon="show1 ? 'visibility' : 'visibility_off'"
+                    @click:append="show1 = !show1"
+                    counter
+                    required
+                  ></v-text-field>
+                </v-flex>
+              </v-layout>
+
+              <v-layout row>
+                <v-flex xs12>
                   <v-btn
                     fab
                     type="submit"
                     class="mt-4 mb-5 white--text"
-                    color="green"
+                    color="blue"
                     large
                     :disabled="!isValid || loading"
                     ripple
                   >
-                    <v-icon v-if="!loading">lock_open</v-icon>
+                    <v-icon v-if="!loading">person_add</v-icon>
                     <v-progress-circular
                       v-if="loading"
                       value="loading"
@@ -67,8 +97,8 @@
                     ></v-progress-circular>
                   </v-btn>
                   <h3>
-                    Don't have an account?
-                    <router-link to="/signup" class="error--text">Sign Up</router-link>
+                    Already have an account?
+                    <router-link to="/login" class="error--text">Sign In</router-link>
                   </h3>
                 </v-flex>
               </v-layout>
@@ -87,43 +117,49 @@ export default {
     return {
       show1: false,
       username: "",
+      email: "",
       password: "",
+      passwordConfirmation: "",
       isValid: false,
       usernameRules: [
-        // check if usernamein input
+        // check if username input exist
         username => !!username || "Username is required",
         // Make sure username is less than 10 characters
         username =>
-          username.length < 10 || "Username must be less than 10 characters"
+          username.length < 20 || "Username must be less than 20 characters",
+        username =>
+          username.length > 1 || "Username must be atleast 2 characters long"
+      ],
+      emailRules: [
+        email => !!email || "Email is required",
+        email => {
+          const emailRegex = /^\w+([.-]?\w+)+@\w+([.:]?\w+)+(\.[a-zA-Z0-9]{2,3})+$/;
+          return emailRegex.test(email) || "Please enter a valid email";
+        }
       ],
       passwordRules: [
-        // check if usernamein input
+        // check if password input exist
         password => !!password || "Password is required",
-        // Make sure username is less than 10 characters
+        // Make sure password is more than 3 characters
         password =>
           password.length > 3 || "Password must be more than 3 characters",
-        // Make sure username is less than 10 characters
-        password => password.match(/\d/g) || "Password must contain a number"
+        // Make sure password contain numbers
+        password => /\d/.test(password) || "Password must contain a number",
+        // Make sure confirmation password matches first password
+        confirmation => confirmation === this.password || "Passwords must match"
       ]
     };
   },
   computed: {
     ...mapGetters(["user", "loading", "isDark"])
   },
-  watch: {
-    user(newValue, oldValue) {
-      // if user value changes, redirect to home page
-      if (newValue !== null) {
-        this.$router.push("profile");
-      }
-    }
-  },
   methods: {
-    handleSignInUser() {
+    handleSignUpUser() {
       if (this.$refs.form.validate()) {
-        this.$store.dispatch("signInUser", {
+        this.$store.dispatch("signUpUser", {
           username: this.username,
-          password: this.password
+          password: this.password,
+          email: this.email
         });
       }
     }
