@@ -3,26 +3,12 @@ import { gql } from 'apollo-boost'
 export const GET_CURRENT_USER = gql`
 	query {
 		getCurrentUser {
-			_id
+			id
 			username
 			email
 			avatar
-			joinDate
+			createdAt
 			updatedAt
-			favorites {
-				verse {
-					verseText
-				}
-				comment
-				color
-			}
-			bookedmarked {
-				verse {
-					verseText
-				}
-				comment
-				color
-			}
 		}
 	}
 `
@@ -30,28 +16,28 @@ export const GET_CURRENT_USER = gql`
 export const GET_BOOKS = gql`
 	query {
 		getBooks {
-			_id
-			bookName
-			bookNumber
-			chapterCount
+			id
+			book_name
+			book_number
+			chapter_count
 		}
 	}
 `
 export const GET_BOOK = gql`
 	query bookQuery($name: String!) {
 		getOneBook(name: $name) {
-			_id
-			bookTitle
-			bookTitle2
-			bookName
-			chapterCount
+			id
+			book_title
+			book_title_2
+			book_name
+			chapter_count
 			chapters {
-				_id
-				chapterNumber
+				id
+				chapter_number
 				verses {
-					_id
-					verseNumber
-					verseText
+					id
+					verse_number
+					verse_text
 				}
 			}
 		}

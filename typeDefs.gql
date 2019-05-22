@@ -1,18 +1,36 @@
+# User
 type User {
-	_id: ID
+	id: ID
 	username: String!
 	email: String!
 	password: String!
 	avatar: String
-	bookedmarked: [BookmarkedVerse]
-	favorites: [BookmarkedVerse]
-	joinDate: String!
+	createdAt: String!
 	updatedAt: String!
 }
 
+# User JWT Token
+type Token {
+	token: String!
+}
+
+# Songs
+type Song {
+	id: Int!
+	name: String!
+	author: String!
+	songNumber: Int
+	stanzas: String
+	chorus: String
+	createdAt: String!
+	updatedAt: String!
+}
+
+# Bible
 type BookmarkedVerse {
 	_id: ID
-	verse: Verse
+	verse: String
+	# verse: Verse
 	comment: String
 	color: String
 	dark: Boolean
@@ -21,48 +39,45 @@ type BookmarkedVerse {
 	updatedAt: String!
 }
 
-type Token {
-	token: String!
-}
-
 type Verse {
-	_id: ID
-	bookName: String!
-	chapterNumber: Int!
-	verseNumber: Int!
-	verseText: String!
-	wordCount: Int
-	letterCount: Int
-	characterCount: Int
+	id: ID
+	book_name: String!
+	chapter_number: Int!
+	verse_number: Int!
+	verse_text: String!
+	word_count: Int
+	letter_count: Int
+	character_count: Int
+	chapterId: Int
 	createdAt: String!
 	updatedAt: String!
 }
 
 type Chapter {
-	_id: ID
-	bookName: String!
-	chapterNumber: Int!
-	verses: [Verse!]!
-	totalVerseCount: Int
-	totalWordCount: Int
-	totalLetterCount: Int
-	totalCharacterCount: Int
+	id: ID
+	book_name: String!
+	chapter_number: Int!
+	verses: [Verse]
+	total_verse_count: Int
+	total_word_count: Int
+	total_letter_count: Int
+	total_character_count: Int
+	bookId: Int
 	createdAt: String!
 	updatedAt: String!
 }
 
 type Book {
-	_id: ID
-	bookTitle: String!
-	bookTitle2: String
-	bookName: String!
-	bookNumber: Int!
-	chapters: [Chapter!]!
-	chapterCount: Int!
-	totalBookVerses: Int
-	totalBookWords: Int
-	totalBookLetters: Int
-	totalBookCharacters: Int
+	id: ID
+	book_title: String!
+	book_title_2: String
+	book_name: String!
+	chapter_count: Int!
+	chapters: [Chapter]
+	total_book_verses: Int
+	total_book_words: Int
+	total_book_letters: Int
+	total_book_characters: Int
 	createdAt: String!
 	updatedAt: String!
 }
@@ -72,9 +87,28 @@ type Query {
 	getOneBook(name: String!): Book
 	getUser(id: String!): User
 	getCurrentUser: User
+	# getSongs: [Song]
 }
 
 type Mutation {
 	signUpUser(username: String!, email: String!, password: String!): Token
 	signInUser(username: String!, password: String!): Token
+	createBookmark(
+		verse: String
+		comment: String
+		color: String
+		dark: Boolean
+		favorite: Boolean
+		token: String
+	): Boolean!
+	createSong(
+		name: String!
+		author: String!
+		songNumber: Int
+		stanzas: String
+		chorus: String
+	): Boolean!
+	createVerse: Boolean
+	createChapter: Boolean
+	createBook: Boolean
 }

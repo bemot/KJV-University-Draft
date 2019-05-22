@@ -1,4 +1,5 @@
 const { ApolloServer, AuthenticationError } = require('apollo-server')
+const db = require('./config/database')
 const mongoose = require('mongoose')
 const fs = require('fs')
 const path = require('path')
@@ -6,20 +7,30 @@ const jwt = require('jsonwebtoken')
 
 // Importing Mongoose Models
 const Book = require('./models/Book')
+const Song = require('./models/Song')
 
 // Import typeDefs and Resolvers
 const filePath = path.join(__dirname, 'typeDefs.gql')
 const typeDefs = fs.readFileSync(filePath, 'utf-8')
 const resolvers = require('./resolvers.js')
 
-// Connecting to MongoDB
-mongoose
-	.connect(process.env.MONGO_URI, {
-		useNewUrlParser: true,
-		useCreateIndex: true
+// Check Database Connection
+db.authenticate()
+	.then(() => {
+		console.log('Connection has been established successfully.')
 	})
-	.then(() => console.log('MongoDB Connected...'))
-	.catch(err => console.error(err))
+	.catch(err => {
+		console.error('Unable to connect to the database:', err)
+	})
+
+// Connecting to MongoDB
+// mongoose
+// 	.connect(process.env.MONGO_URI, {
+// 		useNewUrlParser: true,
+// 		useCreateIndex: true
+// 	})
+// 	.then(() => console.log('MongoDB Connected...'))
+// 	.catch(err => console.error(err))
 
 // Verify JWT Token passed from client
 const getUser = async token => {

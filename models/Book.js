@@ -1,74 +1,27 @@
-const mongoose = require('mongoose')
-const timestamp = require('mongoose-timestamp')
+const Sequelize = require('sequelize')
+const db = require('./../config/database')
+const Chapter = require('./Chapter')
 
-const VerseSchema = mongoose.Schema({
-	bookName: {
-		type: String,
-		required: true
+// Table Model
+class Book extends Sequelize.Model {}
+Book.init(
+	{
+		book_title: Sequelize.STRING,
+		book_title_2: Sequelize.STRING,
+		book_name: {
+			type: Sequelize.STRING,
+			unique: true,
+			allowNull: false
+		},
+		chapter_count: Sequelize.INTEGER,
+		total_book_verses: Sequelize.INTEGER,
+		total_book_words: Sequelize.INTEGER,
+		total_book_letters: Sequelize.INTEGER,
+		total_book_characters: Sequelize.INTEGER
 	},
-	chapterNumber: {
-		type: Number,
-		required: true
-	},
-	verseNumber: {
-		type: Number,
-		required: true
-	},
-	verseText: {
-		type: String,
-		required: true
-	},
-	wordCount: Number,
-	letterCount: Number,
-	characterCount: Number
-})
+	{ underscored: true, sequelize: db, modelName: 'book' }
+)
 
-VerseSchema.plugin(timestamp)
+Book.hasMany(Chapter)
 
-module.exports.Verse = mongoose.model('verses', VerseSchema)
-
-const ChapterSchema = mongoose.Schema({
-	bookName: {
-		type: String,
-		required: true
-	},
-	chapterNumber: {
-		type: Number,
-		required: true
-	},
-	verses: {
-		type: [VerseSchema],
-		required: true
-	},
-	totalVerseCount: Number,
-	totalWordCount: Number,
-	totalLetterCount: Number,
-	totalCharacterCount: Number
-})
-
-ChapterSchema.plugin(timestamp)
-
-module.exports.Chapter = mongoose.model('chapters', ChapterSchema)
-
-const BookSchema = new mongoose.Schema({
-	bookTitle: String,
-	bookTitle2: String,
-	bookName: {
-		type: String,
-		required: true
-	},
-	bookNumber: Number,
-	chapters: {
-		type: [ChapterSchema],
-		required: true
-	},
-	chapterCount: Number,
-	totalBookVerses: Number,
-	totalBookWords: Number,
-	totalBookLetters: Number,
-	totalBookCharacters: Number
-})
-
-BookSchema.plugin(timestamp)
-
-module.exports.Book = mongoose.model('Book', BookSchema)
+module.exports = Book

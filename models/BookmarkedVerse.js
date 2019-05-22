@@ -1,19 +1,18 @@
-const mongoose = require('mongoose')
-const timestamps = require('mongoose-timestamp')
-const Schema = mongoose.Schema
+const Sequelize = require('sequelize')
+const db = require('./../config/database')
 
-const BookmarkedVerseSchema = new Schema({
-	verse: {
-		type: [mongoose.Schema.Types.ObjectId],
-		required: true,
-		ref: 'Verse'
+class BookmarkedVerse extends Sequelize.Model {}
+BookmarkedVerse.init(
+	{
+		verse: {
+			type: Sequelize.STRING
+		},
+		comment: Sequelize.STRING,
+		color: Sequelize.STRING,
+		dark: Sequelize.BOOLEAN,
+		favorite: Sequelize.BOOLEAN
 	},
-	comment: String,
-	color: String,
-	dark: Boolean,
-	favorite: Boolean
-})
+	{ sequelize: db, modelName: 'bookmarked_verse' }
+)
 
-BookmarkedVerseSchema.plugin(timestamps)
-
-module.exports = mongoose.model('BookmarkedVerse', BookmarkedVerseSchema)
+module.exports = BookmarkedVerse

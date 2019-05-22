@@ -1,30 +1,20 @@
-const mongoose = require('mongoose')
-const timestamps = require('mongoose-timestamp')
-const Schema = mongoose.Schema
+const Sequelize = require('sequelize')
+const db = require('./../config/database')
 
-const SongSchema = new Schema({
+// Table Model
+const Song = db.define('song', {
 	name: {
-		type: String,
-		required: true
+		type: Sequelize.STRING,
+		unique: true,
+		allowNull: false
 	},
 	author: {
-		type: String,
-		default: true
+		type: Sequelize.STRING,
+		defaultValue: 'Unknown'
 	},
-	verses: {
-		type: Array,
-		required: true
-	},
-	chorus: {
-		type: Array,
-		required: true
-	},
-	songNumber: {
-		type: Number,
-		required: true
-	}
+	songNumber: Sequelize.INTEGER,
+	stanzas: Sequelize.STRING,
+	chorus: Sequelize.STRING
 })
 
-SongSchema.plugin(timestamps)
-
-module.exports = mongoose.model('Song', SongSchema)
+module.exports = Song
