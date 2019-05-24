@@ -18,7 +18,6 @@ export const GET_BOOKS = gql`
 		getBooks {
 			id
 			book_name
-			book_number
 			chapter_count
 		}
 	}

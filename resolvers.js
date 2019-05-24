@@ -17,10 +17,14 @@ const createToken = (user, secret, expiresIn) => {
 	return jwt.sign({ username, email }, secret, { expiresIn })
 }
 
+// Book Name for Insert Mutations
+const bibleBook = 'Exodus'
+const bibleBookNumber = 2
+const lastID = 50
 // Read json file for uploading to DB
 function readBibleJSONFile(bookName) {
 	return new Promise((resolve, reject) => {
-		fs.readFile(`./json files/${bookName}.json`, 'utf-8', (err, data) => {
+		fs.readFile(`./jsonFiles/${bookName}.json`, 'utf-8', (err, data) => {
 			err ? reject(err) : resolve(JSON.parse(data))
 		})
 	})
@@ -29,7 +33,6 @@ function readBibleJSONFile(bookName) {
 module.exports = {
 	Query: {
 		getBooks: async (parent, args, context) => {
-			db.sync()
 			return await Book.findAll({
 				include: [{ model: Chapter, include: [Verse] }]
 			}).map(books => {
@@ -40,8 +43,6 @@ module.exports = {
 			return await Book.findOne({
 				where: { book_name: args.name },
 				include: [{ model: Chapter, include: [Verse] }]
-			}).map(books => {
-				return books.get({ plain: true })
 			})
 		},
 		// getUser: async (parent, { id }, context) => {
@@ -82,7 +83,7 @@ module.exports = {
 		},
 		signUpUser: async (parent, { username, email, password }, context) => {
 			try {
-				await db.sync({ force: true })
+				await db.sync()
 				// See if user exist
 				const foundUser = await User.findOne({ where: { username } })
 				const foundEmail = await User.findOne({ where: { email } })
@@ -147,16 +148,17 @@ module.exports = {
 		},
 		createBook: async (parent, args, context) => {
 			try {
-				const book = await readBibleJSONFile('Genesis')
+				const book = await readBibleJSONFile(bibleBook)
+				await db.sync()
 				await Book.create({
-					book_title: book.book_title,
-					book_title_2: book.book_title_2,
-					book_name: book.book_name,
-					chapter_count: book.chapter_count,
-					total_book_verses: book.total_book_verses,
-					total_book_words: book.total_book_words,
-					total_book_letters: book.total_book_letters,
-					total_book_characters: book.total_book_characters
+					book_title: book.bookTitle,
+					book_title_2: book.bookTitle2,
+					book_name: book.bookName,
+					chapter_count: book.chapterCount,
+					total_book_verses: book.totalBookVerses,
+					total_book_words: book.totalBookWords,
+					total_book_letters: book.totalBookLetters,
+					total_book_characters: book.totalBookCharacters
 				})
 				return true
 			} catch (err) {
@@ -166,18 +168,20 @@ module.exports = {
 		},
 		createChapter: async (parent, args, context) => {
 			try {
-				const book = await readBibleJSONFile('Genesis')
-				book.chapters.forEach(async chapter => {
-					// await db.sync()
-					await Chapter.create({
-						book_name: chapter.book_name,
-						chapter_number: chapter.chapter_number,
-						total_verse_count: chapter.total_verse_count,
-						total_word_count: chapter.total_word_count,
-						total_letter_count: chapter.total_letter_count,
-						total_character_count: chapter.total_character_count
-					})
+				await db.sync()
+				const book = await readBibleJSONFile(bibleBook)
+				const chapterRecords = book.chapters.map(chapter => {
+					return {
+						book_name: chapter.bookName,
+						chapter_number: chapter.chapterNumber,
+						total_verse_count: chapter.totalVerseCount,
+						total_word_count: chapter.totalWordCount,
+						total_letter_count: chapter.totalLetterCount,
+						total_character_count: chapter.totalCharacterCount,
+						bookId: bibleBookNumber
+					}
 				})
+				await Chapter.bulkCreate(chapterRecords)
 				return true
 			} catch (err) {
 				console.log(err)
@@ -186,20 +190,31 @@ module.exports = {
 		},
 		createVerse: async (parent, args, context) => {
 			try {
-				const verses = await readBibleJSONFile('Genesis')
-				verses.forEach(async verse => {
-					// await db.sync()
-					await Verse.create({
-						book_name: verse.bookName,
-						chapter_number: verse.chapterNumber,
-						verse_number: verse.verseNumber,
-						verse_text: verse.verseText,
-						word_count: verse.wordCount,
-						letter_count: verse.letterCount,
-						character_count: verse.characterCount
+				// await db.sync({force: true})
+				await db.sync()
+				const book = await readBibleJSONFile(bibleBook)
+				const versesRecords = []
+				for (let [index, chapter] of book.chapters.entries()) {
+					chapter.verses.forEach(async verse => {
+						try {
+							versesRecords.push({
+								book_name: verse.bookName,
+								chapter_number: verse.chapterNumber,
+								verse_number: verse.verseNumber,
+								verse_text: verse.verseText,
+								word_count: verse.wordCount,
+								letter_count: verse.letterCount,
+								character_count: verse.characterCount,
+								chapterId: lastID + (index + 1)
+							})
+						} catch (error) {
+							console.log(error)
+							return
+						}
 					})
-					return true
-				})
+				}
+				await Verse.bulkCreate(versesRecords)
+				return true
 			} catch (err) {
 				console.log(err)
 				return false

@@ -11,9 +11,9 @@
     </v-dialog>
     <!-- Chapter View -->
     <v-tabs v-if="!loading" slider-color="red" grow show-arrows>
-      <v-tab v-for="n in bookProp.chapterCount" :key="n" ripple>Chapter {{ n }}</v-tab>
+      <v-tab v-for="n in bookProp.chapter_count" :key="n" ripple>Chapter {{ n }}</v-tab>
       <!-- Chapter Selection Tabs -->
-      <v-tab-item v-for="chapter in bookProp.chapters" :key="chapter._id">
+      <v-tab-item v-for="chapter in bookProp.chapters" :key="chapter.id">
         <!-- Chapter Slides -->
         <v-card flat color="isDark ? #303030 : null">
           <v-container align-center text-xs-left>
@@ -21,13 +21,13 @@
               <v-flex xs12>
                 <!-- Book Title -->
                 <v-card-title class="headline pb-0">
-                  <div class="mx-auto text-xs-center">{{bookProp.bookTitle}}</div>
+                  <div class="mx-auto text-xs-center">{{bookProp.book_title}}</div>
                 </v-card-title>
 
                 <hr class="hrline">
                 <!-- Chapter Number -->
                 <v-card-title class="display-2 blue--text pt-0 font-weight-thin">
-                  <div class="mx-auto text-xs-center">Chapter {{chapter.chapterNumber}}</div>
+                  <div class="mx-auto text-xs-center">Chapter {{chapter.chapter_number}}</div>
                 </v-card-title>
               </v-flex>
               <v-flex xs12 v-if="bookProp.hasOwnProperty('bookTitle2')">
@@ -38,7 +38,7 @@
               </v-flex>
               <v-flex
                 v-for="verse in chapter.verses"
-                :key="verse._id"
+                :key="verse.id"
                 xs12
                 sm8
                 offset-sm2
@@ -46,8 +46,8 @@
                 offset-lg4
               >
                 <v-card-text class="subheading">
-                  <span class="grey--text font-weight-light">{{verse.verseNumber}}</span>
-                  {{ verse.verseText }}
+                  <span class="grey--text font-weight-light">{{verse.verse_number}}</span>
+                  {{ verse.verse_text }}
                 </v-card-text>
               </v-flex>
             </v-layout>

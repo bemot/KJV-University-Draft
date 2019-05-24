@@ -51,7 +51,7 @@ export default new Vuex.Store({
 	},
 	mutations: {
 		setBooks(state, { getBooks }) {
-			state.books = getBooks.sort((a, b) => a.bookNumber - b.bookNumber)
+			state.books = getBooks.sort((a, b) => a.id - b.id)
 		},
 		setOneBook(state, book) {
 			state.book = book

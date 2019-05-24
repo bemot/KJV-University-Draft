@@ -29,9 +29,9 @@
         <NavBookBtn
           v-for="(book, i) in allBooks"
           :key="i"
-          :bookName="book.bookName"
-          :bookNumber="book.bookNumber"
-          :chapterCount="book.chapterCount"
+          :bookName="book.book_name"
+          :bookNumber="parseInt(book.id)"
+          :chapterCount="book.chapter_count"
         ></NavBookBtn>
       </v-list>
     </v-navigation-drawer>
