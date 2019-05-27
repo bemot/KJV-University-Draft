@@ -57,6 +57,28 @@ module.exports = {
 			return await User.findOne({
 				where: { username: currentUser.username }
 			})
+		},
+		getBookmarks: async (parent, args, context) => {
+			try {
+				if (args.token) {
+					const validUser = await jwt.verify(args.token, process.env.SECRET)
+					const foundUser = await User.findOne({
+						where: { username: validUser.username }
+					})
+					return await BookmarkedVerse.findAll({
+						where: { userId: foundUser.id },
+						include: [{ model: Verse }]
+					}).map(verse => {
+						return verse.get({ plain: true })
+					})
+				} else {
+					throw new AuthenticationError(
+						'Your session has ended. Please sign in again.'
+					)
+				}
+			} catch (err) {
+				return err
+			}
 		}
 		// getSongs: async (parent, args, context) => {
 		// 	try {
@@ -113,7 +135,7 @@ module.exports = {
 					})
 					await db.sync()
 					await BookmarkedVerse.create({
-						verse: args.verse,
+						verseId: args.verseId,
 						comment: args.comment,
 						color: args.color,
 						dark: args.dark,

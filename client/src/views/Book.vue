@@ -9,6 +9,7 @@
         </v-card-text>
       </v-card>
     </v-dialog>
+
     <!-- Chapter View -->
     <v-tabs v-if="!loading" slider-color="red" grow show-arrows>
       <v-tab v-for="n in bookProp.chapter_count" :key="n" ripple>Chapter {{ n }}</v-tab>
@@ -32,23 +33,20 @@
               </v-flex>
               <v-flex xs12 v-if="bookProp.hasOwnProperty('bookTitle2')">
                 <!-- Chapter Title 2 -->
-                <div
+                <!-- <div
                   class="text-xs-center grey--text text--darken-2 title font-weight-thin mb-3"
-                >{{bookProp.bookTitle2}}</div>
+                >{{bookProp.book_title_2}}</div>-->
               </v-flex>
-              <v-flex
-                v-for="verse in chapter.verses"
-                :key="verse.id"
-                xs12
-                sm8
-                offset-sm2
-                lg4
-                offset-lg4
-              >
-                <v-card-text class="subheading">
-                  <span class="grey--text font-weight-light">{{verse.verse_number}}</span>
-                  {{ verse.verse_text }}
-                </v-card-text>
+              <v-flex xs12 sm8 offset-sm2>
+                <Verse
+                  :verseText="verse.verse_text"
+                  :verseID="verse.id"
+                  :verseNum="verse.verse_number"
+                  :bookName="bookProp.book_name"
+                  :chapterNum="chapter.chapter_number"
+                  v-for="verse in chapter.verses"
+                  :key="verse.id"
+                ></Verse>
               </v-flex>
             </v-layout>
           </v-container>
@@ -59,20 +57,26 @@
 </template>
 
 <script>
-import { GET_BOOKS } from "./../queries.js";
 import { mapGetters } from "vuex";
+import Verse from "./../components/Verse";
 export default {
+  name: "Book",
+  components: {
+    Verse
+  },
   props: ["bookProp"],
   data() {
     return {
-      dialog: true
+      dialog: true,
+      menu: false
     };
   },
   computed: {
-    ...mapGetters(["loading", "oneBook", "isDark"])
+    ...mapGetters(["loading", "oneBook", "isDark", "allBookmarks"])
   },
   created() {
     this.$store.dispatch("fetchOneBook", this.$route.params.bookName);
+    // this.$store.dispatch("fetchBookmarks");
   }
 };
 </script>

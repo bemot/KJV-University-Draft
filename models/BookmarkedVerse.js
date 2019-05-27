@@ -1,12 +1,10 @@
 const Sequelize = require('sequelize')
 const db = require('./../config/database')
+const Verse = require('./Verse')
 
 class BookmarkedVerse extends Sequelize.Model {}
 BookmarkedVerse.init(
 	{
-		verse: {
-			type: Sequelize.STRING
-		},
 		comment: Sequelize.STRING,
 		color: Sequelize.STRING,
 		dark: Sequelize.BOOLEAN,
@@ -14,5 +12,7 @@ BookmarkedVerse.init(
 	},
 	{ sequelize: db, modelName: 'bookmarked_verse' }
 )
+
+BookmarkedVerse.belongsTo(Verse)
 
 module.exports = BookmarkedVerse

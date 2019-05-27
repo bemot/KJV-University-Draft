@@ -43,6 +43,27 @@ export const GET_BOOK = gql`
 	}
 `
 
+export const GET_BOOKMARKS = gql`
+	query BookmarkQuery($token: String!) {
+		getBookmarks(token: $token) {
+			id
+			comment
+			color
+			dark
+			favorite
+			verse {
+				id
+				book_name
+				chapter_number
+				verse_number
+				verse_text
+			}
+			createdAt
+			updatedAt
+		}
+	}
+`
+
 export const SIGNIN_USER = gql`
 	mutation($username: String!, $password: String!) {
 		signInUser(username: $username, password: $password) {

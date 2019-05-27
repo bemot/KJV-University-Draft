@@ -7,7 +7,8 @@ import {
 	GET_BOOK,
 	SIGNIN_USER,
 	GET_CURRENT_USER,
-	SIGNUP_USER
+	SIGNUP_USER,
+	GET_BOOKMARKS
 } from './queries'
 
 Vue.use(Vuex)
@@ -16,6 +17,7 @@ export default new Vuex.Store({
 	state: {
 		books: '',
 		book: '',
+		bookmarks: null,
 		user: null,
 		loading: false,
 		error: null,
@@ -32,6 +34,9 @@ export default new Vuex.Store({
 		},
 		oneBook(state) {
 			return state.book
+		},
+		allBookmarks(state) {
+			return state.bookmarks
 		},
 		loading(state) {
 			return state.loading
@@ -55,6 +60,9 @@ export default new Vuex.Store({
 		},
 		setOneBook(state, book) {
 			state.book = book
+		},
+		setBookmarks(state, bookmarks) {
+			state.bookmarks = bookmarks.getBookmarks
 		},
 		setLoading(state, status) {
 			state.loading = status
@@ -103,6 +111,21 @@ export default new Vuex.Store({
 				commit('setLoading', false)
 			} catch (err) {
 				commit('setLoading', false)
+				commit('setError', err)
+			}
+		},
+		async fetchBookmarks({ commit }) {
+			try {
+				const token = localStorage.getItem('token')
+				const response = await ApolloClient.query({
+					query: GET_BOOKMARKS,
+					variables: {
+						token: token
+					}
+				})
+				const bookmarks = response.data
+				commit('setBookmarks', bookmarks)
+			} catch (err) {
 				commit('setError', err)
 			}
 		},

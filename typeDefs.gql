@@ -28,13 +28,12 @@ type Song {
 
 # Bible
 type BookmarkedVerse {
-	_id: ID
-	verse: String
-	# verse: Verse
+	id: ID
 	comment: String
 	color: String
 	dark: Boolean
 	favorite: Boolean
+	verse: Verse
 	createdAt: String!
 	updatedAt: String!
 }
@@ -87,6 +86,7 @@ type Query {
 	getOneBook(name: String!): Book
 	getUser(id: String!): User
 	getCurrentUser: User
+	getBookmarks(token: String): [BookmarkedVerse]
 	# getSongs: [Song]
 }
 
@@ -94,7 +94,7 @@ type Mutation {
 	signUpUser(username: String!, email: String!, password: String!): Token
 	signInUser(username: String!, password: String!): Token
 	createBookmark(
-		verse: String
+		verseId: Int
 		comment: String
 		color: String
 		dark: Boolean
