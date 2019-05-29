@@ -33,9 +33,7 @@ function readBibleJSONFile(bookName) {
 module.exports = {
 	Query: {
 		getBooks: async (parent, args, context) => {
-			return await Book.findAll({
-				include: [{ model: Chapter, include: [Verse] }]
-			}).map(books => {
+			return await Book.findAll().map(books => {
 				return books.get({ plain: true })
 			})
 		},
@@ -43,6 +41,25 @@ module.exports = {
 			return await Book.findOne({
 				where: { book_name: args.name },
 				include: [{ model: Chapter, include: [Verse] }]
+			})
+		},
+		getChapters: async (parent, args, context) => {
+			return await Chapter.findAll({
+				where: { book_name: args.name }
+			}).map(chapter => {
+				return chapter.get({ plain: true })
+			})
+		},
+		getOneChapter: async (parent, args, context) => {
+			return await Chapter.findOne({
+				where: { book_name: args.name, chapter_number: args.chapter }
+			})
+		},
+		getVerses: async (parent, args, context) => {
+			return await Verse.findAll({
+				where: { book_name: args.name, chapter_number: args.chapter }
+			}).map(verse => {
+				return verse.get({ plain: true })
 			})
 		},
 		// getUser: async (parent, { id }, context) => {
@@ -67,7 +84,12 @@ module.exports = {
 					})
 					return await BookmarkedVerse.findAll({
 						where: { userId: foundUser.id },
-						include: [{ model: Verse }]
+						include: [
+							{
+								model: Verse,
+								where: { book_name: args.book, chapter_number: args.chapterNum }
+							}
+						]
 					}).map(verse => {
 						return verse.get({ plain: true })
 					})

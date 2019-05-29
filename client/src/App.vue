@@ -24,6 +24,7 @@
           <NavAccountBtn link="/signup" icon="person_add" title="Sign Up"></NavAccountBtn>
         </template>
       </v-list>
+      <!-- Bible Books List -->
       <v-list two-line subheader dense>
         <v-subheader class="grey--text">Holy Bible - King James Version</v-subheader>
         <NavBookBtn
@@ -65,7 +66,7 @@
         dismissible
       >{{ isCompleted }}</v-alert>
       <!-- Router Views -->
-      <router-view :bookProp="book" :key="$route.fullPath"/>
+      <router-view :key="$route.fullPath"/>
 
       <!-- Auth Error Snackbar -->
       <v-snackbar
@@ -107,14 +108,10 @@ export default {
       "allBooks",
       "getError",
       "getAuthError",
-      "oneBook",
       "isDark",
       "isCompleted",
       "user"
     ]),
-    book() {
-      return { ...this.oneBook.getOneBook };
-    },
     toolbarTitle() {
       let title = this.$route.params.bookName;
       if (typeof title !== "undefined") {

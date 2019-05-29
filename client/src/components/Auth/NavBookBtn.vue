@@ -1,5 +1,9 @@
 <template>
-  <v-list-tile :to="'/' + bookName" exact-active-class="default-class error--text">
+  <v-list-tile
+    :to="'/' + bookName"
+    @click="activeChapter()"
+    exact-active-class="default-class error--text"
+  >
     <v-list-tile-action>
       <v-icon>list</v-icon>
     </v-list-tile-action>
@@ -28,6 +32,15 @@ export default {
     chapterCount: {
       type: Number,
       required: true
+    }
+  },
+  methods: {
+    activeChapter() {
+      this.$store.dispatch("clearVerses");
+      this.$store.dispatch("fetchVerses", {
+        name: this.$route.params.bookName,
+        chapter: 1
+      });
     }
   }
 };

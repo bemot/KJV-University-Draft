@@ -4,11 +4,13 @@ import router from './router'
 import { defaultClient as ApolloClient } from './main'
 import {
 	GET_BOOKS,
-	GET_BOOK,
+	GET_CHAPTERS,
+	GET_VERSES,
 	SIGNIN_USER,
 	GET_CURRENT_USER,
 	SIGNUP_USER,
-	GET_BOOKMARKS
+	GET_BOOKMARKS,
+	CREATE_BOOKMARK
 } from './queries'
 
 Vue.use(Vuex)
@@ -16,8 +18,10 @@ Vue.use(Vuex)
 export default new Vuex.Store({
 	state: {
 		books: '',
-		book: '',
-		bookmarks: null,
+		chapters: '',
+		verses: [],
+		bookmarks: [],
+		createdBookmark: false,
 		user: null,
 		loading: false,
 		error: null,
@@ -32,11 +36,17 @@ export default new Vuex.Store({
 		allBooks(state) {
 			return state.books
 		},
-		oneBook(state) {
-			return state.book
+		chapters(state) {
+			return state.chapters
 		},
-		allBookmarks(state) {
+		verses(state) {
+			return state.verses
+		},
+		getBookmarks(state) {
 			return state.bookmarks
+		},
+		createdBookmarkAlert(state) {
+			return state.createdBookmark
 		},
 		loading(state) {
 			return state.loading
@@ -58,11 +68,20 @@ export default new Vuex.Store({
 		setBooks(state, { getBooks }) {
 			state.books = getBooks.sort((a, b) => a.id - b.id)
 		},
-		setOneBook(state, book) {
-			state.book = book
+		setChapters(state, chapters) {
+			state.chapters = chapters
+		},
+		setVerses(state, verses) {
+			state.verses.push(verses)
+		},
+		clearVersesState(state) {
+			state.verses = []
 		},
 		setBookmarks(state, bookmarks) {
 			state.bookmarks = bookmarks.getBookmarks
+		},
+		bookmarkAlert(state, status) {
+			state.createdBookmark = status
 		},
 		setLoading(state, status) {
 			state.loading = status
@@ -96,35 +115,86 @@ export default new Vuex.Store({
 				commit('setError', err)
 			}
 		},
-		async fetchOneBook({ commit }, name) {
+		async fetchChapter({ commit }, name) {
 			commit('setLoading', true)
 
 			try {
 				const response = await ApolloClient.query({
-					query: GET_BOOK,
+					query: GET_CHAPTERS,
 					variables: {
 						name: name
 					}
 				})
-				const book = response.data
-				commit('setOneBook', book)
+				const chapters = response.data
+				commit('setChapters', chapters)
 				commit('setLoading', false)
 			} catch (err) {
 				commit('setLoading', false)
 				commit('setError', err)
 			}
 		},
-		async fetchBookmarks({ commit }) {
+		async fetchVerses({ commit }, payload) {
+			commit('setLoading', true)
+			try {
+				const response = await ApolloClient.query({
+					query: GET_VERSES,
+					variables: {
+						name: payload.name,
+						chapter: payload.chapter
+					}
+				})
+				const verses = response.data
+				commit('setVerses', verses)
+				commit('setLoading', false)
+			} catch (err) {
+				commit('setLoading', false)
+				commit('setError', err)
+			}
+		},
+		async clearVerses({ commit }) {
+			commit('setLoading', true)
+			try {
+				commit('clearVersesState')
+				commit('setLoading', false)
+			} catch (err) {
+				commit('setLoading', false)
+				commit('setError', err)
+			}
+		},
+		async fetchBookmarks({ commit }, payload) {
 			try {
 				const token = localStorage.getItem('token')
 				const response = await ApolloClient.query({
 					query: GET_BOOKMARKS,
 					variables: {
-						token: token
+						token: token,
+						book: payload.name,
+						chapterNum: payload.chapter
 					}
 				})
 				const bookmarks = response.data
+				console.log(bookmarks)
 				commit('setBookmarks', bookmarks)
+			} catch (err) {
+				commit('setError', err)
+			}
+		},
+		async createBookmark({ commit }, payload) {
+			try {
+				const token = localStorage.getItem('token')
+				const response = await ApolloClient.query({
+					query: CREATE_BOOKMARK,
+					variables: {
+						token: token,
+						verseId: payload.verseId,
+						comment: payload.comment,
+						color: payload.color,
+						dark: payload.dark,
+						favorite: payload.favorite
+					}
+				})
+				const status = response.data
+				console.log(status)
 			} catch (err) {
 				commit('setError', err)
 			}

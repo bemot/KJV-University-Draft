@@ -84,9 +84,16 @@ type Book {
 type Query {
 	getBooks: [Book]
 	getOneBook(name: String!): Book
+	getChapters(name: String!): [Chapter]
+	getOneChapter(name: String!, chapter: Int!): Chapter
+	getVerses(name: String!, chapter: Int): [Verse]
 	getUser(id: String!): User
 	getCurrentUser: User
-	getBookmarks(token: String): [BookmarkedVerse]
+	getBookmarks(
+		token: String!
+		book: String!
+		chapterNum: Int
+	): [BookmarkedVerse]
 	# getSongs: [Song]
 }
 
@@ -94,12 +101,12 @@ type Mutation {
 	signUpUser(username: String!, email: String!, password: String!): Token
 	signInUser(username: String!, password: String!): Token
 	createBookmark(
-		verseId: Int
+		verseId: Int!
 		comment: String
-		color: String
+		color: String!
 		dark: Boolean
 		favorite: Boolean
-		token: String
+		token: String!
 	): Boolean!
 	createSong(
 		name: String!

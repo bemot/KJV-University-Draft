@@ -18,34 +18,37 @@ export const GET_BOOKS = gql`
 		getBooks {
 			id
 			book_name
+			book_title
+			book_title_2
 			chapter_count
 		}
 	}
 `
-export const GET_BOOK = gql`
-	query bookQuery($name: String!) {
-		getOneBook(name: $name) {
+export const GET_CHAPTERS = gql`
+	query chapterQuery($name: String!) {
+		getChapters(name: $name) {
 			id
-			book_title
-			book_title_2
 			book_name
-			chapter_count
-			chapters {
-				id
-				chapter_number
-				verses {
-					id
-					verse_number
-					verse_text
-				}
-			}
+			chapter_number
+		}
+	}
+`
+
+export const GET_VERSES = gql`
+	query verseQuery($name: String!, $chapter: Int!) {
+		getVerses(name: $name, chapter: $chapter) {
+			id
+			book_name
+			chapter_number
+			verse_number
+			verse_text
 		}
 	}
 `
 
 export const GET_BOOKMARKS = gql`
-	query BookmarkQuery($token: String!) {
-		getBookmarks(token: $token) {
+	query BookmarkQuery($token: String!, $book: String!, $chapterNum: Int!) {
+		getBookmarks(token: $token, book: $book, chapterNum: $chapterNum) {
 			id
 			comment
 			color
@@ -61,6 +64,26 @@ export const GET_BOOKMARKS = gql`
 			createdAt
 			updatedAt
 		}
+	}
+`
+
+export const CREATE_BOOKMARK = gql`
+	mutation(
+		$verseId: String!
+		$comment: String
+		$color: String
+		$dark: Boolean
+		$favorite: Boolean
+		$token: String
+	) {
+		createBookmark(
+			verseId: $verseId
+			comment: $comment
+			color: $color
+			dark: $dark
+			favorite: $favorite
+			token: $token
+		)
 	}
 `
 
