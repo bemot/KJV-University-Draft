@@ -18,9 +18,9 @@ const createToken = (user, secret, expiresIn) => {
 }
 
 // Book Name for Insert Mutations
-const bibleBook = 'Exodus'
-const bibleBookNumber = 2
-const lastID = 50
+const bibleBook = 'Leviticus'
+const bibleBookNumber = 3
+const lastChapterID = 90
 // Read json file for uploading to DB
 function readBibleJSONFile(bookName) {
 	return new Promise((resolve, reject) => {
@@ -123,7 +123,7 @@ module.exports = {
 				throw new Error('Invalid Password')
 			}
 			// Else return object with token and expiration date
-			return { token: createToken(user, process.env.SECRET, '1hr') }
+			return { token: createToken(user, process.env.SECRET, '3hr') }
 		},
 		signUpUser: async (parent, { username, email, password }, context) => {
 			try {
@@ -148,6 +148,42 @@ module.exports = {
 				return err
 			}
 		},
+		updateBookmark: async (parent, args, context) => {
+			try {
+				if (args.token) {
+					const validUser = await jwt.verify(args.token, process.env.SECRET)
+					const foundUser = await User.findOne({
+						where: { username: validUser.username }
+					})
+					if (foundUser) {
+						await db.sync()
+						const bookmark = await BookmarkedVerse.findByPk(args.id, {
+							include: [{ model: Verse }]
+						})
+						if (bookmark) {
+							try {
+								await BookmarkedVerse.update(JSON.parse(args.update), {
+									where: { id: args.id }
+								})
+								return true
+							} catch (err) {
+								console.log(err)
+								return false
+							}
+						}
+					} else {
+						throw new AuthenticationError('User not found. Please sign up.')
+					}
+				} else {
+					throw new AuthenticationError(
+						'Your session has ended. Please sign in again.'
+					)
+				}
+			} catch (err) {
+				console.log(err)
+				return false
+			}
+		},
 		createBookmark: async (parent, args, context) => {
 			try {
 				if (args.token) {
@@ -155,16 +191,20 @@ module.exports = {
 					const foundUser = await User.findOne({
 						where: { username: validUser.username }
 					})
-					await db.sync()
-					await BookmarkedVerse.create({
-						verseId: args.verseId,
-						comment: args.comment,
-						color: args.color,
-						dark: args.dark,
-						favorite: args.favorite,
-						userId: foundUser.id
-					})
-					return true
+					if (foundUser) {
+						await db.sync()
+						await BookmarkedVerse.create({
+							verseId: args.verseId,
+							comment: args.comment,
+							color: args.color,
+							dark: args.dark,
+							favorite: args.favorite,
+							userId: foundUser.id
+						})
+						return true
+					} else {
+						throw new AuthenticationError('User not found. Please sign up.')
+					}
 				} else {
 					throw new AuthenticationError(
 						'Your session has ended. Please sign in again.'
@@ -249,7 +289,7 @@ module.exports = {
 								word_count: verse.wordCount,
 								letter_count: verse.letterCount,
 								character_count: verse.characterCount,
-								chapterId: lastID + (index + 1)
+								chapterId: lastChapterID + (index + 1)
 							})
 						} catch (error) {
 							console.log(error)

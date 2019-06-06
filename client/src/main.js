@@ -7,6 +7,8 @@ import store from './store'
 import ApolloClient from 'apollo-boost'
 import VueApollo from 'vue-apollo'
 
+import VueClipboard from 'vue-clipboard2'
+
 export const defaultClient = new ApolloClient({
 	uri: '/graphql',
 	// Include auth token w/ request made to backend
@@ -47,6 +49,8 @@ export const defaultClient = new ApolloClient({
 const apolloProvider = new VueApollo({ defaultClient })
 
 Vue.use(VueApollo)
+
+Vue.use(VueClipboard)
 
 Vue.config.productionTip = false
 

@@ -69,12 +69,12 @@ export const GET_BOOKMARKS = gql`
 
 export const CREATE_BOOKMARK = gql`
 	mutation(
-		$verseId: String!
+		$verseId: Int!
 		$comment: String
-		$color: String
+		$color: String!
 		$dark: Boolean
 		$favorite: Boolean
-		$token: String
+		$token: String!
 	) {
 		createBookmark(
 			verseId: $verseId
@@ -84,6 +84,11 @@ export const CREATE_BOOKMARK = gql`
 			favorite: $favorite
 			token: $token
 		)
+	}
+`
+export const UPDATE_BOOKMARK = gql`
+	mutation($update: String, $id: Int!, $token: String!) {
+		updateBookmark(update: $update, id: $id, token: $token)
 	}
 `
 

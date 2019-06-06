@@ -10,7 +10,7 @@
       </v-card>
     </v-dialog>
 
-    <Chapter></Chapter>
+    <Chapter :key="getRefresh"></Chapter>
   </div>
 </template>
 
@@ -18,11 +18,12 @@
 import { mapGetters } from "vuex";
 import Chapter from "../components/Chapter";
 export default {
+  name: "Book",
   components: {
     Chapter
   },
   computed: {
-    ...mapGetters(["loading"])
+    ...mapGetters(["loading", "getRefresh"])
   }
 };
 </script>

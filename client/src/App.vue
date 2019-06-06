@@ -110,7 +110,7 @@ export default {
       "getAuthError",
       "isDark",
       "isCompleted",
-      "user"
+      "user",
     ]),
     toolbarTitle() {
       let title = this.$route.params.bookName;

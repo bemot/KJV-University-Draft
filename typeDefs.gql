@@ -100,6 +100,7 @@ type Query {
 type Mutation {
 	signUpUser(username: String!, email: String!, password: String!): Token
 	signInUser(username: String!, password: String!): Token
+	updateBookmark(update: String, id: Int!, token: String!): Boolean
 	createBookmark(
 		verseId: Int!
 		comment: String

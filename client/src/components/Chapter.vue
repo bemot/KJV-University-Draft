@@ -10,13 +10,6 @@
     <!-- Chapter Selection Tabs -->
     <v-tabs-items v-model="model" touchless>
       <v-tab-item v-for="(chapter, index) in currentChapter" :key="index" lazy>
-        <v-alert
-        v-if="createdBookmarkAlert"
-        :value="createdBookmarkAlert"
-        type="success"
-        transition="scale-transition"
-        dismissible
-      >Bookmark Created!</v-alert>
         <!-- Chapter Slides -->
         <v-card flat color="isDark ? #303030 : null">
           <v-container align-center text-xs-left>
@@ -35,7 +28,7 @@
               </v-flex>
               <!-- Verses -->
               <v-flex xs12 sm8 offset-sm2>
-                <Verse :verses="verses[0].getVerses"></Verse>
+                <Verse v-if="verses[0].getVerses" :verses="verses[0].getVerses" v-on:bookmarkUpdate="updateChapter()" :key="getRefresh"></Verse>
               </v-flex>
             </v-layout>
           </v-container>
@@ -62,7 +55,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["loading", "allBooks", "chapters", "isDark", "verses", "createdBookmarkAlert"]),
+    ...mapGetters(["loading", "allBooks", "chapters", "isDark", "verses", "getRefresh"]),
     currentBook() {
       // Get book data from list of books using chapter book name
       return this.allBooks.find(
@@ -93,6 +86,7 @@ export default {
       name: this.$route.params.bookName,
       chapter: this.currentChapter
     };
+    this.$store.dispatch("clearVerses");
     this.$store.dispatch("fetchVerses", chapter);
     this.$store.dispatch("fetchBookmarks", chapter);
   }

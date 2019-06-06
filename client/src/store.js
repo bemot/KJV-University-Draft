@@ -10,7 +10,8 @@ import {
 	GET_CURRENT_USER,
 	SIGNUP_USER,
 	GET_BOOKMARKS,
-	CREATE_BOOKMARK
+	CREATE_BOOKMARK,
+	UPDATE_BOOKMARK
 } from './queries'
 
 Vue.use(Vuex)
@@ -27,7 +28,8 @@ export default new Vuex.Store({
 		error: null,
 		completed: null,
 		authError: null,
-		dark: false
+		dark: false,
+		refreshId: 1
 	},
 	getters: {
 		user(state) {
@@ -62,6 +64,9 @@ export default new Vuex.Store({
 		},
 		isCompleted(state) {
 			return state.completed
+		},
+		getRefresh(state) {
+			return state.refreshId
 		}
 	},
 	mutations: {
@@ -101,7 +106,8 @@ export default new Vuex.Store({
 		clearUser: state => (state.user = null),
 		setCompleted(state, payload) {
 			return (state.completed = payload)
-		}
+		},
+		refreshID: state => (state.refreshId += 1)
 	},
 	actions: {
 		async fetchBooks({ commit }) {
@@ -182,8 +188,8 @@ export default new Vuex.Store({
 		async createBookmark({ commit }, payload) {
 			try {
 				const token = localStorage.getItem('token')
-				const response = await ApolloClient.query({
-					query: CREATE_BOOKMARK,
+				const response = await ApolloClient.mutate({
+					mutation: CREATE_BOOKMARK,
 					variables: {
 						token: token,
 						verseId: payload.verseId,
@@ -191,6 +197,24 @@ export default new Vuex.Store({
 						color: payload.color,
 						dark: payload.dark,
 						favorite: payload.favorite
+					}
+				})
+				const status = response.data
+				console.log(status)
+			} catch (err) {
+				commit('setError', err)
+			}
+		},
+		async updateBookmark({ commit }, payload) {
+			try {
+				console.log('incoming data => ', payload)
+				const token = localStorage.getItem('token')
+				const response = await ApolloClient.mutate({
+					mutation: UPDATE_BOOKMARK,
+					variables: {
+						id: payload.id,
+						update: payload.update,
+						token: token
 					}
 				})
 				const status = response.data
